@@ -139,7 +139,10 @@ function renderGrid() {
 
     // Render Time Column
     for (let h = openHour; h < closeHour; h++) {
-        // ... (Keep your existing label code here) ...
+        const label = document.createElement('div');
+        label.className = 'time-slot-label';
+        label.textContent = `${formatHour(h)} - ${formatHour(h+1)}`;
+        timeColumn.appendChild(label);
     }
 
     // Render Court Columns
