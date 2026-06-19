@@ -1,0 +1,779 @@
+/* --- Global Smooth Scrolling --- */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure sections aren't hidden under the sticky navbar when scrolled to */
+section {
+    scroll-margin-top: 100px; 
+}
+
+:root {
+    --primary: #25503F; /* Specific Deep Forest Green */
+    --primary-hover: #00332c;
+    --text-on-green: #ffffff;
+    --text-on-white: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg-light: #f8fafc;
+    --card-bg: #ffffff;
+
+    /* Grid Colors */
+    --available-bg: #ffffff;
+    --available-border: #cbd5e1;
+    --selected-bg: #25503F;
+    --selected-text: #ffffff;
+    --booked-bg: #f1f5f9;
+    --booked-text: #94a3b8;
+    --peak-text: #eab308; /* Yellow peak hours text */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-on-white);
+    line-height: 1.5;
+}
+
+/* --- Navbar --- */
+.navbar {
+    background: var(--primary);
+    color: var(--text-on-green);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-container {
+    max-width: 100%;
+    padding-left: 1in; 
+    padding-right: 1in;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Mobile Responsiveness for Navbar --- */
+@media (max-width: 768px) {
+    .nav-container {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+/* --- Full-Width Header Banner --- */
+.banner-container {
+    width: 100%;
+    background-color: var(--primary);
+    border-bottom: 4px solid var(--primary);
+    overflow: hidden;
+}
+
+.banner-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    object-position: center center; /* Keeps the center/logo area prioritized */
+    display: block;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .banner-image {
+        height: 350px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .banner-image {
+        height: 250px;
+        object-position: center center;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .banner-image {
+        height: 200px;
+        object-position: center center;
+    }
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Brand Logo Image Styling --- */
+.brand-img {
+    height: 60px; 
+    width: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+}
+
+.brand-text {
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 1px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-on-green);
+    margin-left: 20px;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.nav-links a:hover {
+    opacity: 1;
+}
+
+.venues-btn {
+    border: 1px solid white;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+/* --- Container --- */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 20px;
+}
+
+/* --- Venue Hero --- */
+.venue-hero {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+}
+
+.venue-info-card {
+    flex: 2;
+}
+
+.venue-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.venue-title h1 {
+    font-size: 1.8rem;
+    color: var(--primary);
+}
+
+.status-badge {
+    background: #dcfce7;
+    color: #166534;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.venue-location {
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.venue-desc {
+    font-size: 0.95rem;
+}
+
+.brand-quote {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.rates-display {
+    flex: 1;
+    background: var(--bg-light);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.rates-display h3 {
+    margin-bottom: 10px;
+    color: var(--primary);
+}
+
+.rates-details p {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.small-print {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 5px;
+}
+
+/* --- Venue Showcase Gallery --- */
+.venue-showcase {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    /* Adding scroll-margin so the navbar doesn't cover the title when clicking the link */
+    scroll-margin-top: 100px; 
+}
+
+.showcase-header {
+    margin-bottom: 1.5rem;
+}
+
+.showcase-header h2 {
+    color: var(--primary); /* Uses your forest green */
+    margin-bottom: 5px;
+    font-size: 1.5rem;
+}
+
+.showcase-header p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+/* Dynamic Grid Layout */
+.gallery-grid {
+    display: grid;
+    /* This creates a responsive grid that automatically fits columns based on screen size */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 15px;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden; /* Ensures the rounded corners stay intact during zoom */
+    aspect-ratio: 4 / 5; /* Forces all images to have the exact same shape */
+    background-color: var(--bg-light); /* Fills space while images load */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Prevents images from stretching or squishing */
+    display: block;
+    transition: transform 0.4s ease; /* Smooth animation setup */
+}
+
+/* Premium Hover Zoom Effect */
+.gallery-item:hover img {
+    transform: scale(1.05); /* Zooms in slightly when mouse hovers over it */
+}
+
+/* --- Booking Section --- */
+.booking-section {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.control-row {
+    margin-top: 15px;
+    margin-bottom: 2rem;
+}
+
+.date-selector label {
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.date-selector input {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+/* Legend */
+.legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    background: var(--bg-light);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+}
+
+.box.available { border: 1px solid var(--available-border); background: var(--available-bg); }
+.box.selected { background: var(--selected-bg); }
+.box.booked { background: var(--booked-bg); color: var(--booked-text); border: 1px solid #d1d5db;}
+.box.peak { border: 1px solid var(--available-border); color: var(--peak-text); background: white; font-weight: bold;}
+
+/* --- Grid Structure --- */
+.grid-container {
+    display: flex;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.grid-header {
+    padding: 15px;
+    font-weight: 700;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    background: #f8fafc;
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: 1px;
+}
+
+.time-column {
+    min-width: 100px;
+    border-right: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+.time-slot-label {
+    padding: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+}
+
+.courts-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+.court-column {
+    flex: 1;
+    min-width: 120px;
+    border-right: 1px solid var(--border);
+}
+
+.court-column:last-child {
+    border-right: none;
+}
+
+.slot {
+    height: 40px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+.slot:last-child {
+    border-bottom: none;
+}
+
+.slot.available {
+    background: var(--available-bg);
+    color: var(--primary);
+}
+
+.slot.available:hover {
+    background: #f1f5f9;
+}
+
+.slot.peak {
+    color: var(--peak-text);
+    font-weight: bold;
+}
+
+.slot.selected {
+    background: var(--selected-bg);
+    color: var(--selected-text);
+}
+
+.slot.booked, .slot.past {
+    background: var(--booked-bg);
+    color: var(--booked-text);
+    cursor: not-allowed;
+}
+
+/* --- Checkout Panel --- */
+.checkout-panel {
+    display: none; /* Dynamic: activated by JS */
+    background: var(--primary);
+    color: var(--text-on-green);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-panel.active {
+    display: flex;
+}
+
+.total-cost {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.btn-confirm {
+    background: white;
+    color: var(--primary);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-confirm:hover {
+    background: #f1f5f9;
+}
+
+/* --- Modal --- */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    border: 1px solid var(--border);
+}
+
+.modal-content h3 {
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+/* --- Footer --- */
+.footer {
+    background: var(--primary);
+    color: var(--text-on-green);
+    padding: 2rem 0;
+    margin-top: 3rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.footer-logo {
+    height: 80px;
+    width: 80px;
+    margin-bottom: 10px;
+    border-radius: 50%; /* Keeps the footer logo round as well */
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 5px;
+}
+
+.footer-brand h4 {
+    letter-spacing: 1px;
+}
+
+.footer h5 {
+    color: var(--peak-text);
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.footer-links a, .footer-socials a {
+    display: block;
+    color: var(--text-on-green);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    opacity: 0.9;
+}
+
+.footer-links a:hover, .footer-socials a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.footer-socials p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.payment-content {
+    max-width: 450px;
+}
+
+.payment-amount {
+    font-size: 1.5rem;
+    color: var(--primary);
+    display: block;
+    margin: 10px 0;
+}
+
+.qr-code-container {
+    margin: 20px auto;
+    padding: 10px;
+    background: white;
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    display: inline-block;
+    width: 320px;
+}
+
+.qr-code-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.payment-instructions {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.receipt-upload {
+    text-align: left;
+    margin-bottom: 20px;
+    background: var(--bg-light);
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.receipt-upload label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-on-white);
+}
+
+.receipt-upload input {
+    width: 100%;
+    font-size: 0.85rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-cancel {
+    background: var(--bg-light);
+    color: var(--text-muted);
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 15px;
+}
+
+.btn-cancel:hover {
+    background: #e2e8f0;
+    color: var(--text-on-white);
+}
+
+/* --- Error Message Styling --- */
+.error-message {
+    display: none;
+    color: #dc2626;
+    background: #fef2f2;
+    border: 1px solid #f87171;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+/* --- Primary Action Buttons ("I Have Paid" & "Close") --- */
+#confirmPaymentBtn, #closeModalBtn, .btn-primary-action {
+    background-color: var(--primary);
+    color: #ffffff; 
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-top: 15px;
+}
+
+/* Hover effect for both buttons */
+#confirmPaymentBtn:hover, #closeModalBtn:hover, .btn-primary-action:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+/* --- Payment Method Selector --- */
+.payment-method {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+.payment-method h4 {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.payment-method label {
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Adjust checkout panel layout to fit the new selector */
+.checkout-panel {
+    display: none; 
+    background: var(--primary);
+    color: var(--text-on-green);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap; /* Allows stacking on smaller screens */
+    gap: 15px;
+}
+
+/* --- Pending (Walk-in) Slot Styling --- */
+.box.pending {
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fcd34d;
+    font-weight: bold;
+}
+
+.slot.pending {
+    background: #fffbeb;
+    color: #d97706;
+    cursor: not-allowed;
+    font-weight: 600;
+}
+
+/* --- Showcase Redirect Button --- */
+.btn-outline {
+    background-color: transparent;
+    color: var(--primary); /* Deep forest green */
+    border: 2px solid var(--primary);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.btn-outline:hover {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+
+/* Hide the 2nd and 3rd preview images on small screens to save space */
+@media (max-width: 768px) {
+    .preview-showcase .gallery-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .preview-showcase .hide-on-mobile {
+        display: none;
+    }
+}
+
+/* --- Midnight Rate Slot --- */
+.slot.midnight {
+    background-color: #e0e7ff; /* Very soft nighttime blue */
+    color: #3730a3; /* Deep blue text */
+    font-weight: 600;
+}
+.slot.midnight:hover {
+    background-color: #c7d2fe;
+}
+
+/* --- Form Validation Errors --- */
+.input-error {
+    border: 2px solid #dc2626 !important; /* Red border */
+    background-color: #fef2f2; /* Light red background */
+}

@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pickle Pal | Online Booking Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-container">
+        <div class="brand-logo">
+          <img
+            src="assets/PAYAG(1).png"
+            alt="Pickle Pal Logo"
+            class="brand-img"
+          />
+          <span class="brand-text">PICKLE PAL</span>
+        </div>
+        <div class="nav-links">
+          <a href="showcase.html" class="venues-btn">Venues</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="banner-container">
+      <img
+        src="assets/PAYAG - 11.jpg"
+        alt="Payag Sa PangPang Resort and Courts"
+        class="banner-image"
+      />
+    </div>
+
+    <main class="container">
+      <header class="venue-hero">
+        <div class="venue-info-card">
+          <div class="venue-title">
+            <h1>COURT YARD CENTRAL - ILIGAN CITY</h1>
+            <span class="status-badge">Available</span>
+          </div>
+          <p class="venue-location">
+            📍 Purok Pag-Asa, Lower Taytay, Ditucalan, Iligan City
+          </p>
+          <p class="venue-desc">
+            1 tournament court size, Silica sand floor, 24 hours operation with
+            incoming coffeeshop, minimart and carwash.
+            <br /><br />
+            <em class="brand-quote"><b>"Play. Connect. Unwind"</b></em>
+          </p>
+        </div>
+        <div class="rates-display">
+          <h3>Rates & Hours:</h3>
+          <div class="rates-details">
+            <p><strong>6:00 AM - 5:00 PM:</strong> ₱130/hr</p>
+            <p><strong>5:00 PM - 12:00 AM:</strong> ₱150/hr</p>
+            <p><strong>12:00 AM - 6:00 AM:</strong> ₱200/hr</p>
+            <p class="small-print" style="margin-top: 10px">
+              <strong>Open Play:</strong> ₱50/person<br />
+              (Only if no hourly bookings)
+            </p>
+          </div>
+        </div>
+      </header>
+
+      <section class="venue-showcase preview-showcase">
+        <div class="showcase-header">
+          <h2>Venue Showcase</h2>
+          <p>
+            Take a look around Court Yard Central before you book your next
+            game.
+          </p>
+        </div>
+
+        <div
+          class="gallery-grid"
+          style="grid-template-columns: repeat(3, 1fr); margin-bottom: 2rem"
+        >
+          <div class="gallery-item">
+            <img src="assets/PAYAG - 7.jpg" />
+          </div>
+          <div class="gallery-item" class="hide-on-mobile">
+            <img src="assets/PAYAG - 20.jpg" />
+          </div>
+          <div class="gallery-item" class="hide-on-mobile">
+            <img src="assets/PAYAG - 22.jpg" />
+          </div>
+        </div>
+
+        <div style="text-align: center">
+          <a href="showcase.html" class="btn-outline">View Full Gallery</a>
+        </div>
+      </section>
+
+      <section class="booking-section">
+        <div class="booking-controls">
+          <h2>Book Your Court</h2>
+          <div class="control-row">
+            <div class="date-selector">
+              <label for="bookingDate">Select Date:</label>
+              <input type="date" id="bookingDate" />
+            </div>
+          </div>
+        </div>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="box available"></div>
+            <span>Available</span>
+          </div>
+          <div class="legend-item">
+            <div class="box selected"></div>
+            <span>Selected</span>
+          </div>
+          <div class="legend-item">
+            <div class="box booked">✕</div>
+            <span>Booked (Paid)</span>
+          </div>
+          <div class="legend-item">
+            <div class="box pending">⏳</div>
+            <span>Pending (Walk-in)</span>
+          </div>
+          <div class="legend-item">
+            <div class="box peak">⚡</div>
+            <span>Peak Hours</span>
+          </div>
+        </div>
+
+        <div class="grid-container">
+          <div class="time-column" id="timeColumn">
+            <div class="grid-header">TIME</div>
+          </div>
+
+          <div class="courts-wrapper" id="courtsWrapper"></div>
+        </div>
+
+        <div class="checkout-panel" id="checkoutPanel">
+          <div class="summary-text">
+            <h3>Summary:</h3>
+            <p><span id="selectedCount">0</span> slots selected.</p>
+          </div>
+
+          <div
+            class="customer-info"
+            style="
+              display: flex;
+              flex-direction: column;
+              gap: 10px;
+              min-width: 200px;
+            "
+          >
+            <input
+              type="text"
+              id="custName"
+              placeholder="Full Name *"
+              style="
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                outline: none;
+              "
+            />
+            <input
+              type="email"
+              id="custEmail"
+              placeholder="Email Address *"
+              style="
+                padding: 8px;
+                border-radius: 4px;
+                border: 1px solid #ccc;
+                outline: none;
+              "
+            />
+
+            <span
+              id="custInfoError"
+              style="
+                color: #dc2626;
+                font-size: 0.85rem;
+                display: none;
+                font-weight: 500;
+              "
+            >
+              ⚠️ Please fill out your Name and Email to proceed.
+            </span>
+          </div>
+
+          <div class="payment-method">
+            <h4>Payment Method:</h4>
+            <label>
+              <input type="radio" name="payMethod" value="online" checked />
+              Online (GCash/Bank)
+            </label>
+            <label>
+              <input type="radio" name="payMethod" value="walkin" />
+              Walk-in (Pay on site)
+            </label>
+          </div>
+
+          <div class="cost-area">
+            <p class="total-cost">Total: ₱<span id="totalCost">0</span></p>
+            <button class="btn-confirm" id="bookBtn">Proceed</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="paymentModal" class="modal">
+      <div class="modal-content payment-content">
+        <h3>Complete Your Payment</h3>
+        <p>
+          Total Amount Due:
+          <strong class="payment-amount"
+            >₱<span id="paymentTotal">0</span></strong
+          >
+        </p>
+
+        <div class="qr-code-container">
+          <!-- IMPORTANT: Replace the 'src' below with the link to your actual GCash/Bank QR code image -->
+          <img
+            src="assets/qrcode_payment.jpg"
+            alt="Payment QR Code"
+            id="qrCodeImage"
+          />
+        </div>
+
+        <p class="payment-instructions">
+          Scan the QR code above using GCash, Maya, or your banking app to send
+          your payment.
+        </p>
+
+        <div class="receipt-upload">
+          <label for="receipt">Upload Proof of Payment (Screenshot):</label>
+          <input type="file" id="receipt" accept="image/*" />
+        </div>
+
+        <div id="receiptError" class="error-message">
+          ⚠️ Please upload a screenshot of your payment receipt to proceed.
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-cancel" id="cancelPaymentBtn">Cancel</button>
+          <button class="btn-confirm" id="confirmPaymentBtn">
+            I Have Paid
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="successModal" class="modal">
+      <div class="modal-content">
+        <h3>Booking Confirmed!</h3>
+        <p>Your selected slots have been reserved.</p>
+        <button class="btn-confirm" id="closeModalBtn" style="margin-top: 15px">
+          Close
+        </button>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-brand">
+          <img
+            src="assets/PAYAG(1).png"
+            alt="Pickle Pal Logo"
+            class="brand-img footer-logo"
+          />
+          <h4>PICKLE PAL</h4>
+        </div>
+        <div class="footer-links">
+          <h5>QUICK LINKS</h5>
+          <a href="showcase.html">Venue Showcase</a>
+          <a href="#">Dashboard</a>
+          <a href="#">About Us</a>
+        </div>
+        <div class="footer-socials">
+          <h5>CONNECT</h5>
+          <p>
+            Facebook:
+            <a href="https://facebook.com/PayagSaPangPang" target="_blank"
+              >Payag Sa PangPang</a
+            >
+          </p>
+          <p>Call: 09949580185</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

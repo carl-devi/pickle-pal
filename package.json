@@ -1,0 +1,20 @@
+{
+  "name": "picklepal-backend",
+  "version": "1.0.0",
+  "description": "Backend API for Pickle Pal Booking",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "nodemailer": "^9.0.0",
+    "sqlite3": "^5.1.7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

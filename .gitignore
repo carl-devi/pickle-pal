@@ -1,0 +1,6 @@
+# Ignore environment variables
+.env
+
+# Ignore heavy Node modules and the local database
+node_modules/
+bookings.db
