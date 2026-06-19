@@ -31,7 +31,7 @@ const totalCostEl = document.getElementById('totalCost');
 // 1. Fetch Live Availability from server
 async function fetchAvailability() {
     try {
-        const response = await fetch(`http://localhost:3000/api/bookings/${currentDate}`);
+        const response = await fetch(`/api/bookings/${currentDate}`);
         liveBookings = await response.json();
         renderGrid(); // Redraw grid after getting data
     } catch (error) {
@@ -133,12 +133,13 @@ function renderGrid() {
     const isToday = currentDate === now.toLocaleDateString('en-CA');
     const currentHour = now.getHours();
 
+    // NEW: Check if the currently selected date on the calendar is a Tue (2) or Fri (5)
+    const selectedDayOfWeek = new Date(currentDate + 'T00:00:00').getDay();
+    const isRestrictedDay = (selectedDayOfWeek === 2 || selectedDayOfWeek === 5);
+
     // Render Time Column
     for (let h = openHour; h < closeHour; h++) {
-        const label = document.createElement('div');
-        label.className = 'time-slot-label';
-        label.textContent = `${formatHour(h)} - ${formatHour(h+1)}`;
-        timeColumn.appendChild(label);
+        // ... (Keep your existing label code here) ...
     }
 
     // Render Court Columns
@@ -151,14 +152,21 @@ function renderGrid() {
             const slot = document.createElement('div');
             const slotId = `${currentDate}_${court.id}_${h}`;
             
-            const tierInfo = getPriceTier(h); // NEW: Get dynamic price block
+            const tierInfo = getPriceTier(h); 
             const slotStatus = liveBookings[slotId]; 
             
-            // Fix for past hours: if h > 24, we need to handle "next day" logic correctly
-            // For simplicity in the prototype, we assume the grid blocks past hours on the current calendar day
             const isPast = isToday && (h < currentHour && h < 24);
+            
+            // NEW: Define the exact hours to block (19 = 7:00 PM, 24 = 12:00 AM)
+            const isRestrictedTime = isRestrictedDay && (h >= 19 && h <= 24);
 
-            if (isPast) {
+            // UPDATED IF/ELSE LOGIC
+            if (isRestrictedTime) {
+                // Render as open play
+                slot.className = 'slot open-play';
+                slot.innerHTML = 'Open Play!';
+                slot.title = 'Dedicated Open Play Session';
+            } else if (isPast) {
                 slot.className = 'slot past';
                 slot.textContent = ''; 
             } else if (slotStatus === 'booked') {
