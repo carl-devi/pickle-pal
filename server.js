@@ -86,7 +86,7 @@ async function sendConfirmationEmails(bookingData) {
 
     // Send to Customer
     transporter.sendMail({
-        from: '"Pickle Pal Reservations" <your-venue-email@gmail.com>',
+        from: '"Pickle Pal Reservations" <payagsapangpang@gmail.com>',
         to: customerEmail,
         subject: `Your Pickle Pal Booking: ${statusText}`,
         html: emailHTML
@@ -94,7 +94,7 @@ async function sendConfirmationEmails(bookingData) {
 
     // Send to Manager
     transporter.sendMail({
-        from: '"Pickle Pal System" <your-venue-email@gmail.com>',
+        from: '"Pickle Pal System" <payagsapangpang@gmail.com>',
         to: MANAGER_EMAIL,
         subject: `NEW BOOKING: ${customerName} (${slots.length} slots)`,
         html: `<p>New booking alert from <b>${customerName}</b> (${customerEmail}).</p>` + emailHTML
