@@ -1,3 +1,6 @@
+import dns from "dns";
+dns.setDefaultResultOrder("ipv4first");
+
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -166,6 +169,24 @@ app.post('/api/book', (req, res) => {
         }
 
         res.json({ success: true, message: "Booking confirmed successfully!" });
+    });
+});
+
+// --- API ROUTE 3: Admin Dashboard (Get ALL Bookings) ---
+app.get('/api/admin/bookings', (req, res) => {
+    
+    // 1. Check the password sent by the browser
+    const providedPass = req.headers.authorization;
+    
+    if (providedPass !== process.env.ADMIN_PASS) {
+        // If it doesn't match, send a 401 Unauthorized error
+        return res.status(401).json({ error: "Access Denied: Incorrect password." });
+    }
+
+    // 2. If the password matches, fetch the data
+    db.all(`SELECT * FROM bookings ORDER BY created_at DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
     });
 });
 

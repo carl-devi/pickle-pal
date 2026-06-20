@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pickle Pal | Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .admin-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        text-align: left;
+      }
+      th,
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #ddd;
+      }
+      th {
+        background-color: var(--primary);
+        color: white;
+      }
+      tr:hover {
+        background-color: #f1f5f9;
+      }
+      .status-booked {
+        color: #15803d;
+        font-weight: bold;
+      }
+      .status-pending {
+        color: #b45309;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav-container">
+        <div class="logo">PICKLE PAL <span>ADMIN</span></div>
+        <nav><a href="main.html">Back to Main Site</a></nav>
+      </div>
+    </header>
+
+    <div class="admin-container">
+      <h2>Booking Records</h2>
+      <p>Live view of all reservations stored in the database.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Booked On</th>
+          </tr>
+        </thead>
+        <tbody id="recordTableBody">
+          <tr>
+            <td colspan="7" style="text-align: center">Loading records...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      // Helper to format 24h to 12h AM/PM
+      function formatHourToAMPM(hour) {
+        let rawHour = hour % 24;
+        const period = hour < 12 || hour >= 24 ? "AM" : "PM";
+        let displayHour =
+          rawHour > 12 ? rawHour - 12 : rawHour === 0 ? 12 : rawHour;
+        return `${displayHour}:00 ${period}`;
+      }
+
+      // Fetch data from the new admin route
+      async function loadRecords() {
+        const tbody = document.getElementById("recordTableBody");
+
+        // 1. Ask the user for the password using a browser prompt
+        const adminPassword = prompt(
+          "🔒 Enter Admin Password to view records:",
+        );
+
+        // If they click cancel or leave it blank, stop immediately
+        if (!adminPassword) {
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align: center; color: #dc2626; font-weight: bold;">Access Denied. Refresh the page to try again.</td></tr>';
+          return;
+        }
+
+        try {
+          // 2. Send the password to the backend in the headers
+          const response = await fetch("/api/admin/bookings", {
+            headers: { Authorization: adminPassword },
+          });
+
+          // 3. Handle incorrect password
+          if (response.status === 401) {
+            tbody.innerHTML =
+              '<tr><td colspan="7" style="text-align: center; color: #dc2626; font-weight: bold;">❌ Incorrect Password. Refresh the page to try again.</td></tr>';
+            return;
+          }
+
+          const records = await response.json();
+          tbody.innerHTML = "";
+
+          if (records.length === 0) {
+            tbody.innerHTML =
+              '<tr><td colspan="7" style="text-align: center;">No bookings found.</td></tr>';
+            return;
+          }
+
+          // 4. Render the table if successful
+          records.forEach((record) => {
+            const statusClass =
+              record.status === "booked" ? "status-booked" : "status-pending";
+            const statusText =
+              record.status === "booked" ? "Paid Online" : "Walk-in (Pending)";
+            const bookedOn = new Date(record.created_at).toLocaleString();
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                        <td>#${record.id}</td>
+                        <td>${record.customer_name || "N/A"}</td>
+                        <td>${record.customer_email || "N/A"}</td>
+                        <td><strong>${record.date}</strong></td>
+                        <td>${formatHourToAMPM(record.hour)}</td>
+                        <td class="${statusClass}">${statusText}</td>
+                        <td style="font-size: 0.85rem; color: #666;">${bookedOn}</td>
+                    `;
+            tbody.appendChild(tr);
+          });
+        } catch (error) {
+          console.error("Failed to load records:", error);
+          tbody.innerHTML =
+            '<tr><td colspan="7" style="text-align: center; color: red;">Error loading data. Is the server running?</td></tr>';
+        }
+      }
+
+      // Load records immediately when page opens
+      loadRecords();
+    </script>
+  </body>
+</html>
