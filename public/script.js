@@ -63,6 +63,7 @@ async function submitBookingToDatabase(status) {
     };
 
     try {
+        // 1. Save to the Render Backend Database
         const response = await fetch('/api/book', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -76,6 +77,33 @@ async function submitBookingToDatabase(status) {
             fetchAvailability(); 
             return false; 
         }
+
+        // ========================================================
+        // 2. NEW: Fire the EmailJS Receipt from the browser!
+        // ========================================================
+        const statusText = status === 'booked' ? 'Paid & Confirmed ✅' : 'Pending Walk-in Payment ⏳';
+        
+        // Format the slots nicely for the email template
+        const readableSlots = slotsArray.map(slot => {
+            const [date, court, hour] = slot.split('_');
+            let hr = parseInt(hour);
+            let displayHr = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
+            let ampm = hr < 12 || hr >= 24 ? 'AM' : 'PM';
+            return `${date} at ${displayHr}:00 ${ampm}`;
+        }).join(' | ');
+
+        // Send to EmailJS (Replace with your actual Service & Template IDs)
+        emailjs.send('service_63pssb8', 'template_0o19wiv', {
+            customer_name: nameInput,
+            customer_email: emailInput,
+            status_text: statusText,
+            readable_slots: readableSlots
+        }).then(() => {
+            console.log("Email sent successfully!");
+        }).catch((err) => {
+            console.error("EmailJS failed:", err);
+        });
+        // ========================================================
 
         return true; 
 
