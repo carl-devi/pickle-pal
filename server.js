@@ -1,4 +1,5 @@
 import dns from "dns";
+// Global fix to force Node.js to use IPv4, preventing Render ENETUNREACH errors
 dns.setDefaultResultOrder("ipv4first");
 
 import 'dotenv/config';
@@ -7,13 +8,13 @@ import cors from 'cors';
 import sqlite3 from 'sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import nodemailer from 'nodemailer'; // <-- NEW: Imported Nodemailer
+import nodemailer from 'nodemailer'; 
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-app.use(cors()); // Allows your frontend to talk to this backend
+app.use(cors()); 
 app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -22,7 +23,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'main.html'));
 });
 
-// Initialize SQLite Database (creates a local file called bookings.db)
+// Initialize SQLite Database
 const db = new sqlite3.Database('./bookings.db', (err) => {
     if (err) console.error("Database error: ", err.message);
     else console.log("Connected to SQLite database.");
@@ -31,7 +32,7 @@ const db = new sqlite3.Database('./bookings.db', (err) => {
 // Create the bookings table if it doesn't exist
 db.run(`CREATE TABLE IF NOT EXISTS bookings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    slot_id TEXT UNIQUE, -- e.g., "2026-06-15_court_1_8"
+    slot_id TEXT UNIQUE, 
     court_id TEXT,
     date TEXT,
     hour INTEGER,
@@ -42,14 +43,14 @@ db.run(`CREATE TABLE IF NOT EXISTS bookings (
 )`);
 
 // ===================================================================
-// --- NEW: Email Configuration (Nodemailer) ---
+// --- Email Configuration (Nodemailer) ---
 // ===================================================================
 const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: parseInt(process.env.SMTP_PORT) || 465,
     secure: true, 
     
-    // NEW FIX: Forces Node.js to use standard IPv4 instead of IPv6
+    // Backup fix ensuring IPv4 routing
     family: 4, 
 
     auth: {
@@ -95,7 +96,7 @@ async function sendConfirmationEmails(bookingData) {
 
     // Send to Customer
     transporter.sendMail({
-        from: '"Pickle Pal Reservations" <payagsapangpang@gmail.com>',
+        from: `"Pickle Pal Reservations" <${process.env.EMAIL_USER}>`,
         to: customerEmail,
         subject: `Your Pickle Pal Booking: ${statusText}`,
         html: emailHTML
@@ -103,7 +104,7 @@ async function sendConfirmationEmails(bookingData) {
 
     // Send to Manager
     transporter.sendMail({
-        from: '"Pickle Pal System" <payagsapangpang@gmail.com>',
+        from: `"Pickle Pal System" <${process.env.EMAIL_USER}>`,
         to: MANAGER_EMAIL,
         subject: `NEW BOOKING: ${customerName} (${slots.length} slots)`,
         html: `<p>New booking alert from <b>${customerName}</b> (${customerEmail}).</p>` + emailHTML
@@ -118,7 +119,6 @@ app.get('/api/bookings/:date', (req, res) => {
     db.all(`SELECT slot_id, status FROM bookings WHERE date = ?`, [targetDate], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         
-        // Convert array of rows into a dictionary for the frontend
         const bookedSlots = {};
         rows.forEach(row => {
             bookedSlots[row.slot_id] = row.status;
@@ -132,14 +132,12 @@ app.get('/api/bookings/:date', (req, res) => {
 app.post('/api/book', (req, res) => {
     const { slots, status, customerName, customerEmail } = req.body;
     
-    // 1. QUERY THE DB: Check if ANY of the requested slots are already taken
     const placeholders = slots.map(() => '?').join(',');
     const checkQuery = `SELECT slot_id FROM bookings WHERE slot_id IN (${placeholders})`;
 
     db.all(checkQuery, slots, (err, rows) => {
         if (err) return res.status(500).json({ error: "Database error" });
 
-        // 2. REJECT IF OCCUPIED
         if (rows.length > 0) {
             const takenSlots = rows.map(r => r.slot_id).join(', ');
             return res.status(409).json({ 
@@ -148,12 +146,11 @@ app.post('/api/book', (req, res) => {
             });
         }
 
-        // 3. INSERT IF AVAILABLE
         const insertStmt = db.prepare(`INSERT INTO bookings (slot_id, court_id, date, hour, status, customer_name, customer_email) VALUES (?, ?, ?, ?, ?, ?, ?)`);
         
         let hasError = false;
         slots.forEach(slotId => {
-            const [date, court, hour] = slotId.split('_'); // e.g. "2026-06-15", "court_1", "8"
+            const [date, court, hour] = slotId.split('_'); 
             
             insertStmt.run([slotId, court, date, parseInt(hour), status, customerName, customerEmail], (err) => {
                 if (err) hasError = true;
@@ -166,10 +163,6 @@ app.post('/api/book', (req, res) => {
             return res.status(500).json({ error: "Failed to save some bookings." });
         }
 
-        // ==========================================================
-        // NEW: TRIGGER EMAILS AFTER SUCCESSFUL DATABASE INSERTION
-        // ==========================================================
-        // Only send if we actually received an email from the frontend
         if (customerEmail) {
             sendConfirmationEmails(req.body);
         }
@@ -181,15 +174,12 @@ app.post('/api/book', (req, res) => {
 // --- API ROUTE 3: Admin Dashboard (Get ALL Bookings) ---
 app.get('/api/admin/bookings', (req, res) => {
     
-    // 1. Check the password sent by the browser
     const providedPass = req.headers.authorization;
     
     if (providedPass !== process.env.ADMIN_PASS) {
-        // If it doesn't match, send a 401 Unauthorized error
         return res.status(401).json({ error: "Access Denied: Incorrect password." });
     }
 
-    // 2. If the password matches, fetch the data
     db.all(`SELECT * FROM bookings ORDER BY created_at DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
@@ -197,4 +187,4 @@ app.get('/api/admin/bookings', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
