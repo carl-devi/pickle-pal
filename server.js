@@ -123,31 +123,6 @@ app.get('/api/bookings/:date', (req, res) => {
 app.post('/api/book', (req, res) => {
     const { slots, status, customerName, customerEmail } = req.body;
     
-    // ==========================================================
-    // NEW: Enforce Tuesday/Friday Lockout (7:00 PM - 1:00 AM)
-    // ==========================================================
-    let isRestricted = false;
-    for (let slotId of slots) {
-        const [dateStr, court, hourStr] = slotId.split('_');
-        const hour = parseInt(hourStr);
-        
-        // Append T00:00:00 to prevent timezone shifts when checking the day
-        const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay(); // 0=Sun, 2=Tue, 5=Fri
-        
-        // Hour 19 is 7:00 PM, Hour 24 is 12:00 AM (which ends at 1:00 AM)
-        if ((dayOfWeek === 2 || dayOfWeek === 5) && hour >= 19 && hour <= 24) {
-            isRestricted = true;
-            break;
-        }
-    }
-
-    if (isRestricted) {
-        return res.status(403).json({
-            error: "Open Play",
-            message: "These hours are reserved for Open Play!"
-        });
-    }
-
     // 1. QUERY THE DB: Check if ANY of the requested slots are already taken
     const placeholders = slots.map(() => '?').join(',');
     const checkQuery = `SELECT slot_id FROM bookings WHERE slot_id IN (${placeholders})`;

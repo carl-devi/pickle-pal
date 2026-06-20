@@ -774,22 +774,21 @@ body {
 
 /* --- Form Validation Errors --- */
 .input-error {
-    border: 2px solid #dc2626 !important; /* Red border */
-    background-color: #fef2f2; /* Light red background */
+    border: 2px solid #dc2626 !important;
+    background-color: #fef2f2;
 }
 
-/* --- Open Play Slots (Replaces .blocked) --- */
-.slot.open-play {
-    background-color: #f0fdf4; /* Very light, inviting green */
-    color: var(--primary); /* Your brand's deep green */
-    cursor: not-allowed; /* Physically prevents hourly selection */
-    pointer-events: none;
-    border: 1px dashed var(--primary);
+/* --- Bookable Open Play Slots --- */
+.slot.open-play-bookable {
+    background-color: #f0fdf4; 
+    color: var(--primary); 
+    border: 1px solid var(--primary);
     font-size: 0.95rem;
     font-weight: 600;
-    display: flex;
-    flex-direction: column; /* Stacks the text and the price cleanly */
-    align-items: center;
-    justify-content: center;
-    line-height: 1.2;
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+.slot.open-play-bookable:hover {
+    background-color: #dcfce7;
 }

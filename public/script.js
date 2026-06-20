@@ -63,7 +63,7 @@ async function submitBookingToDatabase(status) {
     };
 
     try {
-        const response = await fetch('http://localhost:3000/api/book', {
+        const response = await fetch('/api/book', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(bookingData)
@@ -108,18 +108,21 @@ function formatHour(h) {
 // ===================================================================
 // --- Core: Generate and Populate the Grid ---
 // ===================================================================
-// Helper: Get Price and Label based on the hour
-function getPriceTier(h) {
-    let actualHour = h % 24; // Converts numbers like 25 into 1:00 AM
+
+// Helper: Get Price and Label based on the hour AND the day
+function getPriceTier(h, isRestrictedDay) {
+    let actualHour = h % 24; 
+
+    // NEW: Open Play Rate (Tue/Fri, 7:00 PM - 1:00 AM)
+    if (isRestrictedDay && h >= 19 && h <= 24) {
+        return { price: 50, label: '₱50', className: 'slot available open-play-bookable' };
+    }
 
     if (actualHour >= 6 && actualHour < 17) {
-        // 6:00 AM - 5:00 PM (17:00)
         return { price: 130, label: '₱130', className: 'slot available' };
     } else if (actualHour >= 17 && actualHour <= 23) {
-        // 5:00 PM - 12:00 AM
         return { price: 150, label: '⚡ ₱150', className: 'slot available peak' };
     } else {
-        // 12:00 AM - 6:00 AM
         return { price: 200, label: '🌙 ₱200', className: 'slot available midnight' };
     }
 }
@@ -155,21 +158,14 @@ function renderGrid() {
             const slot = document.createElement('div');
             const slotId = `${currentDate}_${court.id}_${h}`;
             
-            const tierInfo = getPriceTier(h); 
+            // Pass the day info into the price tier helper
+            const tierInfo = getPriceTier(h, isRestrictedDay); 
             const slotStatus = liveBookings[slotId]; 
             
             const isPast = isToday && (h < currentHour && h < 24);
-            
-            // NEW: Define the exact hours to block (19 = 7:00 PM, 24 = 12:00 AM)
-            const isRestrictedTime = isRestrictedDay && (h >= 19 && h <= 24);
 
-            // UPDATED IF/ELSE LOGIC
-            if (isRestrictedTime) {
-                // Render as open play
-                slot.className = 'slot open-play';
-                slot.innerHTML = 'Open Play!';
-                slot.title = 'Dedicated Open Play Session';
-            } else if (isPast) {
+            // UPDATED IF/ELSE LOGIC: The restricted time block is completely removed!
+            if (isPast) {
                 slot.className = 'slot past';
                 slot.textContent = ''; 
             } else if (slotStatus === 'booked') {
@@ -181,10 +177,10 @@ function renderGrid() {
                 slot.textContent = '⏳';
                 slot.title = 'Pending Payment (Walk-in)';
             } else {
-                // AVAILABLE
+                // AVAILABLE (Handles Standard, Peak, Midnight, AND Open Play!)
                 slot.dataset.id = slotId;
                 slot.dataset.price = tierInfo.price;
-                slot.dataset.originalLabel = tierInfo.label; // Store this so we can revert back if unselected
+                slot.dataset.originalLabel = tierInfo.label; 
 
                 slot.className = tierInfo.className;
                 slot.innerHTML = tierInfo.label;
