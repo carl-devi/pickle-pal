@@ -45,16 +45,17 @@ db.run(`CREATE TABLE IF NOT EXISTS bookings (
 // --- NEW: Email Configuration (Nodemailer) ---
 // ===================================================================
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  },
-  connectionTimeout: 10000,
-  greetingTimeout: 10000,
-  socketTimeout: 10000
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT) || 465,
+    secure: true, 
+    
+    // NEW FIX: Forces Node.js to use standard IPv4 instead of IPv6
+    family: 4, 
+
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
 });
 
 const MANAGER_EMAIL = process.env.MANAGER_EMAIL;
